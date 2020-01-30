@@ -29,10 +29,6 @@ output "container_name" {
   value = "\"${azurerm_storage_container.tfstate.name}\""
 }
 
-output "resource_group_name" {
-  value = "\"${azurerm_resource_group.tfstate.name}\""
-}
-
-output "sas_url_query_string" {
-  value = "${data.azurerm_storage_account_blob_container_sas.example.sas}"
+output "sas" {
+  value = slice(split(";", data.azurerm_storage_account_blob_container_sas.example.connection_string), 3, 3)
 }
