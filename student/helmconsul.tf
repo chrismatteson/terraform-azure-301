@@ -22,7 +22,9 @@ provider "kubernetes" {
   cluster_ca_certificate = "${base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.cluster_ca_certificate)}"
 }
 
-resource "null_resource" "helm" {
+resource "local_fie" "consul-helm" {
+  filename = "clonesuccess.txt"
+
   provisioner "local-exec" {
     command = "git clone https://github.com/hashicorp/consul-helm.git"
   }
@@ -38,7 +40,7 @@ resource "helm_release" "consul" {
     value = "LoadBalancer"
   }
 
-  depends_on = ["null_resource.helm"]
+  depends_on = ["local_file.consul-helm"]
 }
 
 resource "helm_release" "postgres" {

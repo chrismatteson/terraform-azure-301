@@ -26,6 +26,10 @@ output "host" {
   value = "${azurerm_kubernetes_cluster.k8s.kube_config.0.host}"
 }
 
+output "private_key_pem" {
+  value = "${tls_private_key.k8s.private_key_pem}"
+}
+
 #output "consul_external_ips" {
 #  value = "${data.kubernetes_service.consul.load_balancer_ingress.0.ip}"
 #}

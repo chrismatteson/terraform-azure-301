@@ -18,3 +18,41 @@ Students need to:
 5) Create dev/qa/prod environments as part of a pipeline
 
 It's not expected that groups will finish all of these requirements in the time given.
+
+Manual steps to build:
+1) Enabling ADO, create project, create repo, create pipeline
+2) Service principal created by instructor needs some of the following permissions:
+Azure Active Directory Graph (2)
+Application.ReadWrite.All
+Application
+Read and write all applications
+Yes
+ Granted for HashiCorp Training
+User.Read
+Delegated
+Sign in and read user profile
+-
+ Granted for HashiCorp Training
+Microsoft Graph (4)
+Application.ReadWrite.All
+Delegated
+Read and write all applications
+Yes
+ Granted for HashiCorp Training
+Application.ReadWrite.All
+Application
+Read and write all applications
+Yes
+ Granted for HashiCorp Training
+User.Read
+Delegated
+Sign in and read user profile
+-
+ Granted for HashiCorp Training
+User.Read.All
+Application
+Read all users' full profiles
+Yes
+ Granted for HashiCorp 
+
+3) Update code in repo with service principal information in azurerm and azuread provider stanzas

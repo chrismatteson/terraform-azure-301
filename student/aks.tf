@@ -2,6 +2,9 @@ provider "azurerm" {
   version = "1.20"
 }
 
+provider "azuread" {
+}
+
 # Generate random project name
 resource "random_id" "project_name" {
   byte_length = 4
@@ -27,16 +30,16 @@ resource "azurerm_resource_group" "k8s" {
   tags     = "${local.tags}"
 }
 
-resource "azurerm_azuread_application" "k8s" {
+resource "azuread_application" "k8s" {
   name = "${random_id.project_name.hex}-k8s"
 }
 
-resource "azurerm_azuread_service_principal" "k8s" {
-  application_id = "${azurerm_azuread_application.k8s.application_id}"
+resource "azuread_service_principal" "k8s" {
+  application_id = "${azuread_application.k8s.application_id}"
 }
 
-resource "azurerm_azuread_service_principal_password" "k8s" {
-  service_principal_id = "${azurerm_azuread_service_principal.k8s.id}"
+resource "azuread_service_principal_password" "k8s" {
+  service_principal_id = "${azuread_service_principal.k8s.id}"
   value                = "${random_string.client_secret.result}"
   end_date             = "2021-01-01T01:02:03Z"
 }
@@ -67,14 +70,6 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   resource_group_name = "${azurerm_resource_group.k8s.name}"
   dns_prefix          = "${random_id.project_name.hex}"
 
-  linux_profile {
-    admin_username = "ubuntu"
-
-    ssh_key {
-      key_data = "${file("${var.ssh-public-key}")}"
-    }
-  }
-
   agent_pool_profile {
     name            = "agentpool"
     count           = "${var.count}"
@@ -84,8 +79,8 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   }
 
   service_principal {
-    client_id     = "${azurerm_azuread_application.k8s.application_id}"
-    client_secret = "${azurerm_azuread_service_principal_password.k8s.value}"
+    client_id     = "${azuread_application.k8s.application_id}"
+    client_secret = "${azuread_service_principal_password.k8s.value}"
   }
 
   addon_profile {

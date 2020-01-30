@@ -11,14 +11,15 @@ pool:
 
 steps:
 - script: |
-    echo create ssh key
-    ssh-keygen -b 4096 -f ~/.ssh/id_rsa -N ""
     echo Download and Install Terraform.
     wget https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip
     unzip terraform_0.11.14_linux_amd64.zip
     echo Running Terraform Apply.
     cd student
     ../terraform init
+    echo Workaround dependancy issue
+    mv helmvault.tf helmvault.tf.bak
+    ../terraform apply -auto-approve
+    mv helmvault.tf.bak helmvault.tf
     ../terraform apply -auto-approve
   displayName: 'Run Terraform Apply'
-
