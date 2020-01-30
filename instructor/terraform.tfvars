@@ -1,1 +1,1 @@
-groups=["chicago-chip1","chicago-chip2","chicago-chip3"]
+groups=["accenture1","accenture2","accenture3"]

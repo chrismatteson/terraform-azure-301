@@ -1,0 +1,24 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: |
+    echo create ssh key
+    ssh-keygen -b 4096 -f ~/.ssh/id_rsa -N ""
+    echo Download and Install Terraform.
+    wget https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip
+    unzip terraform_0.11.14_linux_amd64.zip
+    echo Running Terraform Apply.
+    cd student
+    ../terraform init
+    ../terraform apply -auto-approve
+  displayName: 'Run Terraform Apply'
+

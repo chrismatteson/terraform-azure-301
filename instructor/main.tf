@@ -1,3 +1,53 @@
+# Create Storage Account and Container
+
+resource "random_id" "name" {
+  byte_length = 4
+}
+
+resource "azurerm_resource_group" "tfstate" {
+  name     = "${random_id.name.hex}-tfstate"
+  location = "eastus"
+}
+
+resource "azurerm_storage_account" "tfstate" {
+  name                     = "${lower(random_id.name.hex)}tfstate"
+  resource_group_name      = azurerm_resource_group.tfstate.name
+  location                 = azurerm_resource_group.tfstate.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "tfstate" {
+  name                  = "tfstate"
+  resource_group_name   = azurerm_resource_group.tfstate.name
+  storage_account_name  = azurerm_storage_account.tfstate.name
+  container_access_type = "private"
+}
+
+data "azurerm_storage_account_blob_container_sas" "example" {
+  connection_string = "${azurerm_storage_account.tfstate.primary_connection_string}"
+  container_name    = "${azurerm_storage_container.tfstate.name}"
+  https_only        = true
+
+  start  = "2020-01-01"
+  expiry = "2024-03-21"
+
+  permissions {
+    read   = true
+    add    = true
+    create = true
+    write  = true
+    delete = true
+    list   = true
+  }
+
+  cache_control       = "max-age=5"
+  content_disposition = "inline"
+  content_encoding    = "deflate"
+  content_language    = "en-US"
+  content_type        = "application/json"
+}
+
 # Create passwords and user accounts for every student
 
 resource "random_pet" "password" {
@@ -67,6 +117,19 @@ resource "azurerm_role_assignment" "role_assignment" {
   scope                = data.azurerm_subscription.primary.id
   role_definition_name = "Contributor"
   principal_id         = azuread_service_principal.app.id
+}
+
+# Create workspaces
+resource "tfe_organization" "organization" {
+  count  = length(var.groups)
+  name  = "${random_id.prefix.hex}-${element(var.groups, count.index)}-ado"
+  email = azuread_user.user[count.index].user_principal_name
+}
+
+resource "tfe_workspace" "workspace" {
+  count  = length(var.groups)
+  name         = "production"
+  organization = tfe_organization.organization[count.index].name
 }
 
 #provider "azuredevops" {
