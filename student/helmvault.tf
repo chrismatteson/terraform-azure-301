@@ -46,7 +46,7 @@ echo $VAULT_TOKEN | ../vault login -;
 ../vault write database/config/postgres \
     plugin_name=postgresql-database-plugin \
     allowed_roles="postgres-role" \
-    connection_url="postgresql://root:root@${data.kubernetes_service.postgres.spec.0.cluster_ip}:5432/rails_development?sslmode=disable";
+    connection_url="postgresql://postgres:postgres@${data.kubernetes_service.postgres.spec.0.cluster_ip}:5432/rails_development?sslmode=disable";
 ../vault write database/roles/postgres-role \
     db_name=postgres \
     creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
@@ -57,7 +57,7 @@ echo $VAULT_TOKEN | ../vault login -;
 kubectl apply -f postgres-serviceaccount.yml;
 export VAULT_SA_NAME=$(kubectl get sa postgres-vault -o jsonpath="{.secrets[*]['name']}");
 export SA_JWT_TOKEN=$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data.token}" | base64 --decode; echo);
-export SA_CA_CRT=$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data['ca\.crt']}" | base64 --decode; echo);
+export SA_CA_CRT=i"$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data['ca\.crt']}" | base64 --decode; echo)";
 export K8S_HOST=${azurerm_kubernetes_cluster.k8s.fqdn};
 ../vault auth enable kubernetes;
 ../vault write auth/kubernetes/config \

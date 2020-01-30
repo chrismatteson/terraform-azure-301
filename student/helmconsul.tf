@@ -48,13 +48,13 @@ resource "helm_release" "postgres" {
   chart = "stable/postgresql"
 
   set = {
-    name  = "postgresUser"
-    value = "root"
+    name  = "postgresUsername"
+    value = "postgres"
   }
 
   set = {
     name  = "postgresPassword"
-    value = "root"
+    value = "postgres"
   }
 
   set = {
