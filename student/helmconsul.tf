@@ -22,7 +22,7 @@ provider "kubernetes" {
   cluster_ca_certificate = "${base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.cluster_ca_certificate)}"
 }
 
-resource "local_fie" "consul-helm" {
+resource "local_file" "consul-helm" {
   filename = "clonesuccess.txt"
 
   provisioner "local-exec" {
