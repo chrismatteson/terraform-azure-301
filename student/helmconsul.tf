@@ -8,9 +8,9 @@ provider "helm" {
     client_certificate     = "${base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_certificate)}"
     client_key             = "${base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_key)}"
     cluster_ca_certificate = "${base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.cluster_ca_certificate)}"
-  }
 
-  insecure = true
+    load_config_file = false
+  }
 }
 
 provider "kubernetes" {
@@ -21,6 +21,8 @@ provider "kubernetes" {
   client_certificate     = "${base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_certificate)}"
   client_key             = "${base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.client_key)}"
   cluster_ca_certificate = "${base64decode(azurerm_kubernetes_cluster.k8s.kube_config.0.cluster_ca_certificate)}"
+  
+  load_config_file = false
 }
 
 resource "local_file" "consul-helm" {
