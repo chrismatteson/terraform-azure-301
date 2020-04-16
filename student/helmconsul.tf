@@ -1,4 +1,5 @@
 provider "helm" {
+  version = "0.10.4"
   kubernetes {
     host     = "${azurerm_kubernetes_cluster.k8s.kube_config.0.host}"
     username = "${azurerm_kubernetes_cluster.k8s.kube_config.0.username}"
